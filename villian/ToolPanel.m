@@ -25,6 +25,7 @@
     NSInteger _bonusFear;
     NSInteger _bonusDistract;
     NSInteger _bonusSpeed;
+    BOOL _alerted;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -149,9 +150,11 @@
     
     _timerLabel.text = [NSString stringWithFormat:(seconds < 10 ? @"%i:0%i" : @"%i:%i"),minutes, seconds];
     
-    if (_timeRemaining == 0) {
+    if (!_alerted && _timeRemaining == 0) {
         [_timer invalidate];
         _timer = nil;
+        
+        _alerted = YES;
         
         [self.delegate timesUp];
     }
@@ -168,7 +171,8 @@
     
     _killCountLabel.text = [NSString stringWithFormat:@"%04i",killCount];
     
-    if (_killCount == _goal) {
+    if (!_alerted && _killCount == _goal) {
+        _alerted = YES;
         [self.delegate win];
     }
 }
@@ -179,7 +183,8 @@
     
     _zomCountLabel.text = [NSString stringWithFormat:@"%04i",zomCount];
     
-    if (_zomCount == 0 && _numberOfZomAttacks == 0) {
+    if (_zomCount == 0 && _numberOfZomAttacks == 0 && !_alerted) {
+        _alerted = YES;
         [self.delegate outOfZoms];
     }
 }
