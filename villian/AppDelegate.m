@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import "GTGameViewController.h"
+#import "MenuViewController.h"
+#import "LevelGenerator.h"
 
 @implementation AppDelegate
 
@@ -17,11 +20,45 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
+
+    [self displayMenu];
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+
+- (void)displayMenu {
+    if ([self.window.rootViewController isKindOfClass:[GTGameViewController class]]) {
+        [((GTGameViewController *)self.window.rootViewController) invalidate];
+    }
+    
+    MenuViewController *vc = [[MenuViewController alloc] init];
+    self.window.rootViewController = vc;
+}
+
+
+- (void)displayGameForLevel:(NSUInteger)level {
+    if ([self.window.rootViewController isKindOfClass:[GTGameViewController class]]) {
+        [((GTGameViewController *)self.window.rootViewController) invalidate];
+    }
+    
+    if (level > [LevelGenerator numberOfLevels]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"You Win!" message:@"You completed the last level! Congratulations, you brought humanity to its knees!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        [alert show];
+        [self displayMenu];
+        return;
+    }
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:level forKey:@"saved_level"];
+    [defaults synchronize];
+    
+    GTGameViewController *controller = [LevelGenerator controllerForLevel:level];
+    self.window.rootViewController = controller;
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

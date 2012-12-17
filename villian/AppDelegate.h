@@ -18,5 +18,7 @@
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+- (void)displayGameForLevel:(NSUInteger)level;
+- (void)displayMenu;
 
 @end
